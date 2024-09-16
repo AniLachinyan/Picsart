@@ -1,4 +1,5 @@
 from abc import ABC,abstractmethod
+from account import Account
 class Account(ABC):
     def __init__(self,account_number:int, balance: float, account_type:str ):
         self.__account_number=account_number
@@ -15,7 +16,7 @@ class Account(ABC):
         pass
     
     @abstractmethod
-    def transfer(self,destination:"Account",amount: float) -> None:
+    def transfer(self,destination: Account , amount: float) -> None:
         pass
     @abstractmethod
     def show_balance(self) -> None:
@@ -39,7 +40,7 @@ class Account(ABC):
         return self.__balance
 
     def setBalance(self,balance):
-        if (balance<0 or type(balance) is not int ):
+        if (balance<0 or not isinstance(balance,(int,float)) ):
             print("Please enter valid Account Balance")
         self.__balance=balance
 
@@ -110,10 +111,10 @@ class SavingsAccount(Account):
         print(f"Deposited {amount}$. New balance is {self.__balance}$")
 
     def withdraw(self, amount: float) -> None:
-        if (self.__balance < amount ):
+        if (self.getBalance < amount ):
             print("Insufficient funds, overdraft limit exceeded")
         else:
-            self.__balances-=amount
+            self.setBalance(self.getBalance-amount)
             print(f"Withdrew {amount}$. New balnce is {self.__balance}$")    
 
     def transfer(self, destination: Account, amount: float) -> None:
@@ -145,7 +146,7 @@ class JointAccount(Account):
 
 
     def add_owner(self, customer_name: str) -> None:
-        self.joint_owners.append(customer_name)
+        self.__joint_owners.append(customer_name)
         print(f"Added {customer_name} as a joint owner.")
 
 
@@ -175,6 +176,15 @@ class JointAccount(Account):
 
     def get_account_type(self) -> str:
         return self.__account_type
+
+
+
+
+    
+
+
+
+        
 
 
 
