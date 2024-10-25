@@ -1,107 +1,99 @@
 from abc import ABC,abstractmethod
 
-class MenuOperations(ABC):
+class course_assignment(ABC):
+    def __init__(self,title,maxscore):
+        self.title=title
+        self.maxscore=maxscore
+        self.submissions={}
 
     @abstractmethod
-    def display_menu(self):
+    def submit_assignment(self,student,score):
         pass
 
-    @abstractmethod
-    def add_dishes(self,dish):
-        pass
 
-class dish(ABC):
-    def __init__(self,name,price):
+
+class Course(ABC):
+    def __init__(self,name,instructor):
         self.name=name
-        self.price=price
+        self.instructor=instructor
+        self.students=[]
+        self.assignments=[]
 
 
-    @abstractmethod
-    def dish_type(self):
-        pass    
+    def add_students(self,student):
+        if student not in self.students:
+            self.students.append(student)
+        else:
+            print("Student is already enrolled")
 
 
-class appetizer(dish):
-    def dish_type(self):
-        return "Appetizer"
-    
-class entrees(dish):
-    def dish_type(self):
-        return "Entrees"
+    def add_assignment(self,assignment):
+        if assignment not in self.assignments:
+            self.assignments.append(assignment)
+        else:
+            print("You already have this assignment")
+
+    def view_students(self):
+        for student in self.students:
+            print(student.name)                    
 
 
+class UndergraduatedCourse(Course):
+    def __init__(self, name, instructor):
+        super().__init__(name, instructor)
 
 
-
-class Menu(MenuOperations):
-    def __init__(self):
-        self.dishes=[]
-    
-
-    def add_dishes(self, dish):
-        self.dishes.append(dish)
-
-
-    def display_menu(self):
-        for dish in self.dishes:
-            print(dish,dish.price)
+class GraduatedCourse(Course):
+    def __init__(self, name, instructor):
+        super().__init__(name, instructor)
 
 
 
-class Customer:
+class CourseAssignment(course_assignment):
+    def CheckAssignment(self,student,score):
+        if score<self.maxscore:
+            self.submissions[student.name]=score
+            student.complited_assignment[self.title]=score
+        else:
+            print(f"Score must be less than {self.maxscore}")
+
+
+
+class Profesor:
     def __init__(self,name,contact_info):
         self.name=name
         self.contact_info=contact_info
-        self.order_history=[]
+        self.courses=[]
 
 
-    def add_order(self,order):
-        self.order_history.append(order)
-
-    def view_order_history(self):
-        if self.order_history:
-            for order in self.order_history:
-                print(order)        
+    def creat_course(self,course_type,course_name):
+        if (course_type=="Undergraduated"):
+            course=UndergraduatedCourse(course_name,self)
+        elif (course_type=="Graduated"):
+            course=UndergraduatedCourse(course_name,self)
         else:
-            print("You havn't done any orders yet")
+            print("Invalid cource!")    
+        
+        self.courses.append(course)
+        return course
+    
+    def view_course(self):
+        for course in self.courses:
+            print(course.name)
 
 
-
-class Order:
-    def __init__(self,customer,dishes):
-        self.customer=customer
-        self.dishes=dishes
-        self.price=sum([dish for dish in dishes])
-
-
-
-class Restaurant:
-    def __init__(self,name):
+class Student:
+    def __init__(self,name,contact_info):
         self.name=name
-        self.menu=Menu()
-        self.customers=[]
+        self.contact_info=contact_info
+        self.courses=[]
+        self.complited_assignments=[]
 
 
-    def add_customer(self,customer):
-        self.customers.append(customer)
+    def enroll(self,course:Course):
+        course.add_students(self)
 
 
-    def find_customer(self,name):
-        for customer in self.customers:
-            if customer.name==name:
-                return customer
-            else:
-                print("Customer name not found")
-
-
-
-
-    def place_order(self,customer_name,dish_name):
-        customer=self.find_customer(customer_name)
-        if customer:
-            dishes=[]
-            for dish in self.menu.dishes:
-                if dish in dish_name:
-                    dishes.append(dish)
-        else:
-            print("Customer not found")
+    def view_progress(self):
+        for assignment in self.complited_assignments:
+            print(assignment)
